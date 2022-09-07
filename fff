@@ -1,0 +1,43 @@
+import sys
+sys.stdin=open("input.txt","r")
+def solution(id_list, report, k):
+    report_hash={}
+    result_hash={}
+    for r in report: #for _ in range(report): integer가 아니여서 에러남.
+        user,bad=r.split()
+        if user not in report_hash:#user가 누구를 신고했는지 정리하기
+            report_hash[user]=set()
+        report_hash[user].add(bad)
+
+
+        if bad not in result_hash:#bad기준으로 신고한 user가 몇명인지 세기위해 만듬(k개 기준이상이면 중지해야 하기 떄문)
+            result_hash[bad]=set()
+        result_hash[bad].add(user)
+
+    # {'muzi': {'neo', 'frodo'}, 'apeach': {'muzi', 'frodo'}, 'frodo': {'neo'}}
+    # {'frodo': {'apeach', 'muzi'}, 'neo': {'muzi', 'frodo'}, 'muzi': {'apeach'}}
+    print(report_hash)
+    print(result_hash)
+
+
+    answer = [0 for _ in range(len(id_list))] #[0, 0, 0, 0]
+    for i in range(len(id_list)):
+        user=id_list[i]
+        if user not in report_hash:# 중지된 사람이 몇명인지 user에게 통보하기 위해서 user로 조회함.
+            continue
+        #report_hashd에서 user가 있다면
+        #{'muzi': {'frodo', 'neo'}, 'apeach': {'frodo', 'muzi'}, 'frodo': {'neo'}}
+        for bad in report_hash[user]:#report_hash[user]은 user의 value값이 나옴.
+            if len(result_hash[bad])>=k:
+                answer[i]+=1#신고당한 횟수를 user에게 반환해주기
+
+    return answer
+
+
+id_list=["muzi", "frodo", "apeach", "neo"]
+report=["muzi frodo","apeach frodo","frodo neo","muzi neo","apeach muzi"]
+k=2
+result=[2,1,1,0]
+print(solution(id_list, report, k))
+
+
